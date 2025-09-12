@@ -21,13 +21,16 @@
   <link rel="manifest" href="manifest.json">
 
   <style>
-    /* --- your existing CSS stays the same --- */
+    /* keep all your CSS from before */
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; }
+    .install-prompt { display:none; padding:10px; margin:10px; border:1px solid #ccc; border-radius:8px; background:#ffffcc; }
+    /* your existing CSS from the old file should be pasted here */
   </style>
 </head>
 <body>
   <!-- PIN Authentication Section -->
   <div id="pinSection" class="pin-section">
-    <!-- ... unchanged ... -->
+    <!-- same PIN UI as before -->
   </div>
 
   <div class="container">
@@ -35,46 +38,24 @@
       <button class="settings-gear" onclick="showSettings()" title="Settings">⚙️</button>
       <h1>🩺 Headache Diary</h1>
       <p>Professional headache tracking system</p>
+      <!-- Install prompt only appears if NOT standalone -->
       <div id="installPrompt" class="install-prompt">
         Tap "Share" then "Add to Home Screen" to install this app
       </div>
     </div>
 
     <div class="content">
-      <!-- ... unchanged sections ... -->
+      <!-- your dashboard / report / summary / edit entries sections remain unchanged -->
     </div>
   </div>
 
   <!-- Settings Modal -->
-  <!-- ... unchanged ... -->
-
   <!-- Change PIN Modal -->
-  <!-- ... unchanged ... -->
-
-  <div style="text-align: center; padding: 20px; color: white; font-size: 12px; margin-top: 20px;">
-    © 2024 Armenian Neuroscience Institute. All rights reserved.<br>
-    Proprietary medical software for headache tracking.
-  </div>
+  <!-- Footer -->
+  <!-- keep everything from your previous file -->
 
   <script>
-    // Global variables
-    let selectedIntensity = null;
-    let headacheEntries = [];
-    let currentDate = new Date();
-    let editingEntryId = null;
-    let isFirstTimeUser = true;
-    let savedPin = null;
-
-    document.addEventListener('DOMContentLoaded', function() {
-      checkPinStatus();
-      setupPWA();
-    });
-
-    // Expose functions globally
-    window.deleteCurrentEntry = deleteCurrentEntry;
-    window.confirmLogout = confirmLogout;
-    /* ... other existing assignments ... */
-
+    // keep all your JS functions from before
     // --- FIXED PWA setup ---
     function setupPWA() {
       if ('serviceWorker' in navigator) {
@@ -83,22 +64,27 @@
           .catch(err => console.log('SW registration failed', err));
       }
 
+      // Show install message only if NOT already installed
       if (navigator.userAgent.match(/iPhone|iPad|iPod/)) {
-        if (!navigator.standalone) {
+        if (!window.navigator.standalone) {
           document.getElementById('installPrompt').style.display = 'block';
+        } else {
+          document.getElementById('installPrompt').style.display = 'none';
         }
       }
     }
 
-    /* --- rest of your existing code stays the same --- */
+    document.addEventListener('DOMContentLoaded', function() {
+      checkPinStatus();
+      setupPWA();
+    });
 
-    // --- FIXED deleteCurrentEntry ---
+    // include the fixed deleteCurrentEntry and confirmLogout from before
     function deleteCurrentEntry() {
       if (!editingEntryId) {
         alert('No entry selected for deletion');
         return;
       }
-
       if (confirm('Are you sure you want to delete this headache entry? This action cannot be undone.')) {
         const index = headacheEntries.findIndex(e => e.id === editingEntryId);
         if (index !== -1) {
@@ -106,7 +92,7 @@
           saveHeadacheData();
           showSuccess('Headache entry deleted successfully!');
           clearReportForm();
-          editingEntryId = null; // reset
+          editingEntryId = null;
           backToDashboard();
         } else {
           alert('Entry not found');
@@ -114,20 +100,18 @@
       }
     }
 
-    // --- FIXED confirmLogout ---
     function confirmLogout() {
       if (confirm('Are you sure you want to logout?')) {
         hideSettings();
         document.getElementById('pinSection').style.display = 'flex';
         clearPinInputs();
-        // Force re-authentication
         savedPin = localStorage.getItem('headacheDiaryPin');
         isFirstTimeUser = !savedPin;
         checkPinStatus();
       }
     }
 
-    /* --- rest of your functions unchanged (saveHeadacheEntry, editEntry, etc.) --- */
+    // keep the rest of your headache tracker code unchanged (saveHeadacheEntry, editEntry, etc.)
   </script>
 </body>
 </html>
